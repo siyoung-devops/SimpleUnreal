@@ -1,0 +1,14 @@
+# Visual Studio
+.vs/
+x64/
+x86/
+Debug/
+Release/
+*.vcxproj.user
+*.user
+*.suo
+*.VC.db
+*.opendb
+
+# Claude Code 작업 폴더
+.claude/
