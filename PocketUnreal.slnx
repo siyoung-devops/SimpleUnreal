@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="PocketUnreal/PocketUnreal.vcxproj" Id="ae858251-e982-44a4-ae95-91482131c3d4" />
+</Solution>
