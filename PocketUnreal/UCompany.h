@@ -13,6 +13,8 @@ public:
 
 	void AddCoworker(UObject* InCoworker);
 	void AddSubsidiary(UObject* InSubsidiary);
+	void RemoveCoworker(UObject* InCoworker);
+	void RemoveSubsidiary(UObject* InSubsidiary);
 
 private:
 	UPROPERTY(std::vector<UObject*>, Coworkers);
