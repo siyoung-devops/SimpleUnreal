@@ -50,7 +50,7 @@ public:
 		else if constexpr (TIsVector<T>::value)
 		{
 			std::string Text = "[";
-			TProperty<typename T::value_type> ElementProperty("", 0);
+			static TProperty<typename T::value_type> ElementProperty("", 0);
 
 			for (const auto& Element : *ValuePtr)
 			{
@@ -132,7 +132,7 @@ public:
 		}
 		else if constexpr (TIsVector<T>::value)
 		{
-			TProperty<typename T::value_type> ElementProperty("", 0);
+			static TProperty<typename T::value_type> ElementProperty("", 0);
 			return "Array<" + ElementProperty.GetTypeName() + ">";
 		}
 		else
@@ -173,7 +173,7 @@ public:
 		}
 		else if constexpr (TIsVector<T>::value)
 		{
-			TProperty<typename T::value_type> ElementProperty("", 0);
+			static TProperty<typename T::value_type> ElementProperty("", 0);
 
 			for (const auto& Element : *ValuePtr)
 			{
@@ -194,7 +194,7 @@ public:
 		}
 		else if constexpr (TIsVector<T>::value)
 		{
-			TProperty<typename T::value_type> ElementProperty("", 0);
+			static TProperty<typename T::value_type> ElementProperty("", 0);
 			return ElementProperty.HasObjectReference();
 		}
 		else
