@@ -59,6 +59,7 @@ void PrintProperties(const UObject* InObject)
 	std::cout << "======================================================" << std::endl;
 	for (const UClass* Class = InObject->GetClass(); Class != nullptr; Class = Class->GetSuperClass())
 	{
+		std::cout << "[" << Class->GetName() << "]" << std::endl;
 		const std::vector<FProperty*>& Properties = Class->GetProperties();
 		for (FProperty* Property : Properties)
 		{
@@ -293,6 +294,7 @@ int main()
 	PrintProperties(Coworker);
 	Coworker->CallFunction("SetInfo Lee 30");
 	PrintProperties(Coworker);
+	std::cout << "======================================================" << std::endl;
 	Coworker->CallFunction("GetAge");
 
 	CleanUpAll();

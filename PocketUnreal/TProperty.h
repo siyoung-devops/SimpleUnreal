@@ -1,5 +1,6 @@
 #pragma once
 #include "FProperty.h"
+#include <stdexcept>
 #include <type_traits>
 
 template<typename InType>
@@ -42,7 +43,7 @@ public:
 		{
 			return std::to_string(static_cast<int>(*ValuePtr));
 		}
-		else if constexpr (std::is_same_v<T, UObject*>)
+		else if constexpr (TIsObjectPointer<T>)
 		{
 			if (*ValuePtr == nullptr)
 			{
@@ -58,7 +59,12 @@ public:
 
 			for (const auto& Element : *ValuePtr)
 			{
-				std::string ElementText = ElementProperty.ExportText(&Element);
+				if (Text.size() > 1)
+				{
+					Text += ", ";
+				}
+
+				Text += ElementProperty.ExportText(&Element);
 			}
 
 			Text += "]";
@@ -103,11 +109,9 @@ public:
 			const int NewValue = std::stoi(InValue);
 			*ValuePtr = static_cast<T>(NewValue);
 		}
-		else if constexpr (std::is_same_v<T, UObject*>)
+		else if constexpr (TIsObjectPointer<T> || TIsVector<T>::value)
 		{
-		}
-		else if constexpr (TIsVector<T>::value)
-		{
+			throw std::invalid_argument("지원하지 않는 인자 타입");
 		}
 		else
 		{
@@ -129,7 +133,7 @@ public:
 		{
 			return "enum";
 		}
-		else if constexpr (std::is_same_v<T, UObject*>)
+		else if constexpr (TIsObjectPointer<T>)
 		{
 			return "Object";
 		}
