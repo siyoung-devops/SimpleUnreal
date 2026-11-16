@@ -44,7 +44,7 @@ void UObject::CallFunction(const std::string& InCommand)
 
 		if (ReturnText != "")
 		{
-			std::cout << "Result: " << ReturnText << std::endl;
+			std::cout << FunctionName << " Result : " << ReturnText << std::endl;
 		}
 	}
 	catch (const std::exception& Error)
