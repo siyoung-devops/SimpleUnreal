@@ -8,6 +8,13 @@
 // UCoworker에 멤버가 세 개(Name, Age, Position)라면 FProperty도 세 개
 // 오브젝트 주소를 받아서, 그 오브젝트 안에서 이 멤버가 있는 주소를 돌려주는 기능
 
+enum class EGCReferenceKind
+{
+	None,
+	Object,
+	ObjectArray
+};
+
 class FProperty
 {
 public:
@@ -25,8 +32,7 @@ public:
 	virtual std::string ExportText(const void* InContainer) const = 0;
 	virtual void ImportText(void* InContainer, const std::string& InValue) const = 0;
 	virtual std::string GetTypeName() const = 0;
-	virtual void GetReferencedObjects(const void* InContainer, std::vector<UObject*>& OutObjects) const = 0;
-	virtual bool HasObjectReference() const = 0;
+	virtual EGCReferenceKind GetReferenceKind() const = 0;
 
 private:
 	std::string Name;

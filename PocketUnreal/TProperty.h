@@ -9,6 +9,10 @@ template<typename ElementType>
 struct TIsVector<std::vector<ElementType>> : std::true_type {};
 
 template<typename T>
+constexpr bool TIsObjectPointer = std::is_pointer_v<T> && std::is_base_of_v<UObject, std::remove_pointer_t<T>>;
+
+
+template<typename T>
 class TProperty : public FProperty
 {
 public:
@@ -141,65 +145,19 @@ public:
 		}
 	}
 
-	void GetReferencedObjects(const void* InContainer, std::vector<UObject*>& OutObjects) const override
+	EGCReferenceKind GetReferenceKind() const override
 	{
-		if (InContainer == nullptr)
+		if constexpr (TIsObjectPointer<T>)
 		{
-			return;
-		}
-
-		const T* ValuePtr = reinterpret_cast<const T*>(reinterpret_cast<const char*>(InContainer) + GetOffset());
-
-		if constexpr (std::is_same_v<T, int>)
-		{
-			return;
-		}
-		else if constexpr (std::is_same_v<T, std::string>)
-		{
-			return;
-		}
-		else if constexpr (std::is_enum_v<T>)
-		{
-			return;
-		}
-		else if constexpr (std::is_same_v<T, UObject*>)
-		{
-			if (*ValuePtr == nullptr)
-			{
-				return;
-			}
-
-			OutObjects.push_back(*ValuePtr);
+			return EGCReferenceKind::Object;
 		}
 		else if constexpr (TIsVector<T>::value)
 		{
-			static TProperty<typename T::value_type> ElementProperty("", 0);
-
-			for (const auto& Element : *ValuePtr)
+			if constexpr (TIsObjectPointer<typename T::value_type>)
 			{
-				ElementProperty.GetReferencedObjects(&Element, OutObjects);
+				return EGCReferenceKind::ObjectArray;
 			}
 		}
-		else
-		{
-			static_assert(sizeof(T) == 0, "TProperty: 지원하지 않는 타입");
-		}
-	}
-
-	bool HasObjectReference() const override
-	{
-		if constexpr (std::is_same_v<T, UObject*>)
-		{
-			return true;
-		}
-		else if constexpr (TIsVector<T>::value)
-		{
-			static TProperty<typename T::value_type> ElementProperty("", 0);
-			return ElementProperty.HasObjectReference();
-		}
-		else
-		{
-			return false;
-		}
+		return EGCReferenceKind::None;
 	}
 };

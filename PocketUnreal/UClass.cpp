@@ -4,9 +4,10 @@ void UClass::AddProperty(FProperty* InProperty)
 {
 	Properties.push_back(InProperty);
 
-	if (InProperty->HasObjectReference())
+	EGCReferenceKind Kind = InProperty->GetReferenceKind();
+	if (Kind != EGCReferenceKind::None)
 	{
-		ReferenceProperties.push_back(InProperty);
+		ReferenceSchema.push_back({ InProperty->GetOffset(), Kind });
 	}
 }
 

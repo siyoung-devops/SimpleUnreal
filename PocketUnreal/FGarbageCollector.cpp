@@ -8,8 +8,6 @@
 void FGarbageCollector::Mark()
 {
 	std::vector<UObject*> WorkList;
-
-	std::vector<UObject*> RefObjects;
 	std::vector<UObject*>& ObjectList = UObject::GetObjectList();
 
 	WorkList.reserve(ObjectList.size());
@@ -28,19 +26,46 @@ void FGarbageCollector::Mark()
 		UObject* Current = WorkList.back();
 		WorkList.pop_back();
 
-		const std::vector<FProperty*>* ReferenceProperties = Current->GetClass()->GetReferenceProperties();
-		for (FProperty* Property : *ReferenceProperties)
+		const std::vector<FGCReferenceInfo>* ReferenceSchema = Current->GetClass()->GetReferenceSchema();
+		for (const FGCReferenceInfo& Info : *ReferenceSchema)
 		{
-			RefObjects.clear();
-			Property->GetReferencedObjects(Current, RefObjects);
+			const char* MemberAddress = reinterpret_cast<const char*>(Current) + Info.Offset;
 
-			for (UObject* RefObject : RefObjects)
+			switch (Info.Kind)
 			{
-				if (!RefObject->IsMarked())
+			case EGCReferenceKind::Object:
 				{
-					RefObject->Mark();
-					WorkList.push_back(RefObject);
+					UObject* RefObject = *(reinterpret_cast<UObject* const*>(MemberAddress));
+					if (RefObject == nullptr)
+					{
+						continue;
+					}
+
+					if (!RefObject->IsMarked())
+					{
+						RefObject->Mark();
+						WorkList.push_back(RefObject);
+					}
 				}
+				break;
+			case EGCReferenceKind::ObjectArray:
+				{
+					const std::vector<UObject*>* RefObjectList = reinterpret_cast<const std::vector<UObject*>*>(MemberAddress);
+					for (UObject* RefObject : *RefObjectList)
+					{
+						if (RefObject == nullptr)
+						{
+							continue;
+						}
+
+						if (!RefObject->IsMarked())
+						{
+							RefObject->Mark();
+							WorkList.push_back(RefObject);
+						}
+					}
+				}
+				break;
 			}
 		}
 	}
@@ -132,5 +157,7 @@ void FGarbageCollector::IncrementalPurge(double InTimeLimitMs, FGCStats& OutStat
 	++OutStats.PurgeCount;
 	OutStats.PurgeTotalMs += ElapsedMs;
 	if (ElapsedMs > OutStats.PurgeMaxMs)
+	{
 		OutStats.PurgeMaxMs = ElapsedMs;
+	}
 }

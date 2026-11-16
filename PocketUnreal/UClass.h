@@ -7,6 +7,12 @@
 #include "FProperty.h"
 #include "FFunction.h"
 
+struct FGCReferenceInfo
+{
+	size_t Offset = 0;
+	EGCReferenceKind Kind = EGCReferenceKind::None;
+};
+
 class UClass
 {
 public:
@@ -25,7 +31,9 @@ public:
 	size_t GetObjectSize() const { return ObjectSize; }
 
 	const std::vector<FProperty*>* GetProperties() const { return &Properties; }
-	const std::vector<FProperty*>* GetReferenceProperties() const { return &ReferenceProperties; }
+
+	// 스키마 관리 
+	const std::vector<FGCReferenceInfo>* GetReferenceSchema() const { return &ReferenceSchema; }
 
 	// Property 관리
 	void AddProperty(FProperty* InProperty);
@@ -41,6 +49,7 @@ private:
 	size_t ObjectSize = 0;
 
 	std::vector<FProperty*> Properties;
-	std::vector<FProperty*> ReferenceProperties;
 	std::vector<FFunction*> Functions;
+
+	std::vector<FGCReferenceInfo> ReferenceSchema;
 };
