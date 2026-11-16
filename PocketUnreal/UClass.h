@@ -1,6 +1,5 @@
 #pragma once
 
-#include <utility>
 #include <string>
 #include <vector>
 
@@ -21,6 +20,10 @@ public:
 		, SuperClass(InSuperClass)
 		, ObjectSize(InObjectSize)
 	{
+		if (SuperClass != nullptr)
+		{
+			ReferenceSchema = SuperClass->GetReferenceSchema();
+		}
 	}
 
 	UClass(const UClass&) = delete;
@@ -28,18 +31,13 @@ public:
 
 	const std::string& GetName() const { return Name; }
 	const UClass* GetSuperClass() const { return SuperClass; }
-	size_t GetObjectSize() const { return ObjectSize; }
 
-	const std::vector<FProperty*>* GetProperties() const { return &Properties; }
+	const std::vector<FProperty*>& GetProperties() const { return Properties; }
+	const std::vector<FGCReferenceInfo>& GetReferenceSchema() const { return ReferenceSchema; }
 
-	// 스키마 관리 
-	const std::vector<FGCReferenceInfo>* GetReferenceSchema() const { return &ReferenceSchema; }
-
-	// Property 관리
 	void AddProperty(FProperty* InProperty);
 	const FProperty* FindPropertyByName(const std::string& InPropertyName) const;
 
-	// RPC - Function 관리
 	void AddFunction(FFunction* InFunction);
 	const FFunction* FindFunctionByName(const std::string& InFunctionName) const;
 

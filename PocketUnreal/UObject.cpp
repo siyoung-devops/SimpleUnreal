@@ -26,7 +26,6 @@ void UObject::CallFunction(const std::string& InCommand)
 	std::string FunctionName = InCommand.substr(0, SpaceIndex);
 	std::string Args = "";
 
-	// 공백이 없으면 npos
 	if (SpaceIndex != std::string::npos)
 	{
 		Args = InCommand.substr(SpaceIndex + 1);

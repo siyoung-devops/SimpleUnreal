@@ -59,7 +59,6 @@ public:
 			for (const auto& Element : *ValuePtr)
 			{
 				std::string ElementText = ElementProperty.ExportText(&Element);
-				Text += (ElementText + ", ");
 			}
 
 			Text += "]";

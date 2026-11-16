@@ -20,8 +20,10 @@ public:
 	static void IncrementalPurge(double InTimeLimitMs, FGCStats& OutStats);
 
 private:
+	static void MarkReference(UObject* InObject, std::vector<UObject*>& OutWorkList);
 	static void Mark();
 	static void Sweep();
+	static double GetTimeMs();
 
 	static std::vector<UObject*>& GetPendingDeleteObjectList();
 };

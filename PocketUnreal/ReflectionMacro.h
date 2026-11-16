@@ -52,7 +52,6 @@ public: \
 		GetRegisterFunctions(), &RegisterProperty_##Name \
 	}; \
 	Type Name
-// Type Name에서 ; 없이 끝나면 = "Henry";가 뒤에 붙을 수 있다. 
 
 
 #define UFUNCTION(Name) \
@@ -64,5 +63,3 @@ public: \
 	{ \
 		GetRegisterFunctions(), &RegisterFunction_##Name \
 	};
-// decltype : 괄호 안에 쓴 것의 타입을 컴파일러가 대신 적어 주는 것.
-// decltype(&UCoworker::SetAge)라고 쓰면 컴파일러가 같은 타입을 알아서 넣어줌. 

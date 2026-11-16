@@ -54,6 +54,20 @@ const char* ToString(const EGCScenario InScenario)
 	return "Unknown";
 }
 
+void PrintProperties(const UObject* InObject)
+{
+	std::cout << "======================================================" << std::endl;
+	for (const UClass* Class = InObject->GetClass(); Class != nullptr; Class = Class->GetSuperClass())
+	{
+		const std::vector<FProperty*>& Properties = Class->GetProperties();
+		for (FProperty* Property : Properties)
+		{
+			std::cout << Property->GetName() << "(Type : " << Property->GetTypeName() <<
+				") : " << Property->ExportText(InObject) << std::endl;
+		}
+	}
+}
+
 void MeasureGC(const EGCScenario InScenario)
 {
 	std::cout << "======== " << "[GC 시나리오] : " << ToString(InScenario) << " ========" << std::endl;
@@ -133,7 +147,6 @@ std::vector<UCompany*> AddSubsidiaries(UCompany* Company, int Count)
 	return Children;
 }
 
-// 남은 직원수 모두 채워보기
 void FillCoworkers(UCompany* Company)
 {
 	int Count = ObjectCount - static_cast<int>(UObject::GetObjectList().size());
@@ -275,6 +288,14 @@ int main()
 	PlayGCScenario(EGCScenario::Hierarchy);
 	PlayGCScenario(EGCScenario::Cycle);
 	PlayGCScenario(EGCScenario::Ring);
+
+	UCoworker* Coworker = UObject::NewObject<UCoworker>();
+	PrintProperties(Coworker);
+	Coworker->CallFunction("SetInfo Lee 30");
+	PrintProperties(Coworker);
+	Coworker->CallFunction("GetAge");
+
+	CleanUpAll();
 
 	return 0;
 }
