@@ -10,11 +10,6 @@ void UCompany::AddSubsidiary(UObject* InSubsidiary)
 	Subsidiaries.push_back(InSubsidiary);
 }
 
-void UCompany::RemoveCoworker(UObject* InCoworker)
-{
-	std::erase(Coworkers, InCoworker);
-}
-
 void UCompany::RemoveSubsidiary(UObject* InSubsidiary)
 {
 	std::erase(Subsidiaries, InSubsidiary);

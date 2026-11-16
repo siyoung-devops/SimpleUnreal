@@ -5,7 +5,6 @@
 
 #include <vector>
 
-// GC가 회사 오브젝트만 보고도 "이 회사가 어떤 직원들을 가리키는지" 리플렉션으로 찾아낼 수 있게 만드는 거
 class UCompany : public UObject
 {
 public:
@@ -13,7 +12,6 @@ public:
 
 	void AddCoworker(UObject* InCoworker);
 	void AddSubsidiary(UObject* InSubsidiary);
-	void RemoveCoworker(UObject* InCoworker);
 	void RemoveSubsidiary(UObject* InSubsidiary);
 
 private:

@@ -13,11 +13,6 @@ void UClass::AddProperty(FProperty* InProperty)
 
 const FProperty* UClass::FindPropertyByName(const std::string& InPropertyName) const
 {
-	if (Properties.empty())
-	{
-		return nullptr;
-	}
-
 	for (const FProperty* Property : Properties)
 	{
 		if (Property->GetName() == InPropertyName)
@@ -26,10 +21,14 @@ const FProperty* UClass::FindPropertyByName(const std::string& InPropertyName) c
 		}
 	}
 
+	if (SuperClass != nullptr)
+	{
+		return SuperClass->FindPropertyByName(InPropertyName);
+	}
+
 	return nullptr;
 }
 
-// RPC
 void UClass::AddFunction(FFunction* InFunction)
 {
 	Functions.push_back(InFunction);
@@ -37,17 +36,17 @@ void UClass::AddFunction(FFunction* InFunction)
 
 const FFunction* UClass::FindFunctionByName(const std::string& InFunctionName) const
 {
-	if (Functions.empty())
-	{
-		return nullptr;
-	}
-
 	for (const FFunction* Function : Functions)
 	{
 		if (Function->GetName() == InFunctionName)
 		{
 			return Function;
 		}
+	}
+
+	if (SuperClass != nullptr)
+	{
+		return SuperClass->FindFunctionByName(InFunctionName);
 	}
 
 	return nullptr;

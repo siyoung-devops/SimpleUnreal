@@ -5,6 +5,21 @@
 #include "UClass.h"
 #include "FProperty.h"
 
+
+void FGarbageCollector::MarkReference(UObject* InObject, std::vector<UObject*>& OutWorkList)
+{
+	if (InObject == nullptr)
+	{
+		return;
+	}
+
+	if (!InObject->IsMarked())
+	{
+		InObject->Mark();
+		OutWorkList.push_back(InObject);
+	}
+}
+
 void FGarbageCollector::Mark()
 {
 	std::vector<UObject*> WorkList;
@@ -26,8 +41,7 @@ void FGarbageCollector::Mark()
 		UObject* Current = WorkList.back();
 		WorkList.pop_back();
 
-		const std::vector<FGCReferenceInfo>* ReferenceSchema = Current->GetClass()->GetReferenceSchema();
-		for (const FGCReferenceInfo& Info : *ReferenceSchema)
+		for (const FGCReferenceInfo& Info : Current->GetClass()->GetReferenceSchema())
 		{
 			const char* MemberAddress = reinterpret_cast<const char*>(Current) + Info.Offset;
 
@@ -36,16 +50,7 @@ void FGarbageCollector::Mark()
 			case EGCReferenceKind::Object:
 				{
 					UObject* RefObject = *(reinterpret_cast<UObject* const*>(MemberAddress));
-					if (RefObject == nullptr)
-					{
-						continue;
-					}
-
-					if (!RefObject->IsMarked())
-					{
-						RefObject->Mark();
-						WorkList.push_back(RefObject);
-					}
+					MarkReference(RefObject, WorkList);
 				}
 				break;
 			case EGCReferenceKind::ObjectArray:
@@ -53,16 +58,7 @@ void FGarbageCollector::Mark()
 					const std::vector<UObject*>* RefObjectList = reinterpret_cast<const std::vector<UObject*>*>(MemberAddress);
 					for (UObject* RefObject : *RefObjectList)
 					{
-						if (RefObject == nullptr)
-						{
-							continue;
-						}
-
-						if (!RefObject->IsMarked())
-						{
-							RefObject->Mark();
-							WorkList.push_back(RefObject);
-						}
+						MarkReference(RefObject, WorkList);
 					}
 				}
 				break;
@@ -98,13 +94,12 @@ void FGarbageCollector::Sweep()
 	ObjectList.swap(AliveList);
 }
 
-static double GetTimeMs()
+double FGarbageCollector::GetTimeMs()
 {
 	std::chrono::steady_clock::duration Elapsed = std::chrono::steady_clock::now().time_since_epoch();
 	return std::chrono::duration<double, std::milli>(Elapsed).count();
 }
 
-// 누가 지워야할 오브젝트인지 골라내기
 FGCStats FGarbageCollector::Collect()
 {
 	FGCStats Stats;
@@ -123,16 +118,12 @@ FGCStats FGarbageCollector::Collect()
 	return Stats;
 }
 
-// Sweep이 골라낸, 지워야할 오브젝트 리스트 
 std::vector<UObject*>& FGarbageCollector::GetPendingDeleteObjectList()
 {
 	static std::vector<UObject*> PendingDeleteObjectList;
 	return PendingDeleteObjectList;
 }
 
-// 언리얼의 IncrementalPurgeGarbage도 오브젝트 하나마다 시계를 보지 않고, 일정 개수마다 확인
-// 매번	10만 번 확인하면	시계 읽느라 삭제 시간이 거의 두 배가 될 수 있음
-// 언리얼 방식대로 100개마다	1000번 으로 변경
 void FGarbageCollector::IncrementalPurge(double InTimeLimitMs, FGCStats& OutStats)
 {
 	double StartMs = GetTimeMs();
