@@ -26,7 +26,7 @@ public:
 	UFUNCTION(SetInfo);
 
 	void SetAge(const int InAge);
-	int GetAge();
+	int GetAge() const;
 	void SetName(const std::string& InName);
 	int AddAge(const int InAge);
 	void SetInfo(const std::string& InName, const int InAge);
