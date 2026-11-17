@@ -10,7 +10,7 @@ void UCoworker::SetAge(const int InAge)
 	Age = InAge;
 }
 
-int UCoworker::GetAge()
+int UCoworker::GetAge() const
 {
 	return Age;
 }

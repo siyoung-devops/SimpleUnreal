@@ -156,6 +156,8 @@ public:
 		}
 		else if constexpr (TIsVector<T>::value)
 		{
+			static_assert(!TIsVector<typename T::value_type>::value, "TProperty: 중첩 배열 방지");
+
 			if constexpr (TIsObjectPointer<typename T::value_type>)
 			{
 				return EGCReferenceKind::ObjectArray;

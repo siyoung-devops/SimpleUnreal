@@ -43,6 +43,11 @@ struct TMemberFunctionTraits<R(C::*)(A...)>
 	using ReturnType = R;
 };
 
+template<typename C, typename... A, typename R>
+struct TMemberFunctionTraits<R(C::*)(A...)const> :TMemberFunctionTraits<R(C::*)(A...)>
+{
+};
+
 template<typename T>
 class TFunction : public FFunction
 {
