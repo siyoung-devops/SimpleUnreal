@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "FProperty.h"
 #include "FFunction.h"
+
+#include <string>
+#include <vector>
 
 struct FGCReferenceInfo
 {
@@ -25,6 +25,8 @@ public:
 			ReferenceSchema = SuperClass->GetReferenceSchema();
 		}
 	}
+
+	~UClass();
 
 	UClass(const UClass&) = delete;
 	UClass& operator=(const UClass&) = delete;

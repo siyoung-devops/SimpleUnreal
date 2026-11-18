@@ -1,5 +1,18 @@
 #include "UClass.h"
 
+UClass::~UClass()
+{
+	for (FProperty* Property : Properties)
+	{
+		delete Property;
+	}
+
+	for (FFunction* Function : Functions)
+	{
+		delete Function;
+	}
+}
+
 void UClass::AddProperty(FProperty* InProperty)
 {
 	Properties.push_back(InProperty);

@@ -1,9 +1,9 @@
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <Windows.h>
 #include <vector>
-#include <filesystem>
+#include <Windows.h>
 
 struct FClassInfo
 {
@@ -134,7 +134,6 @@ bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutCla
 
 	return !OutClassInfo.ClassName.empty();
 }
-
 
 bool LoadFileToString(const std::string& InFilePath, std::string& OutText)
 {

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
 #include "UObject.h"
+
+#include <vector>
 
 struct FGCStats
 {

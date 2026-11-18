@@ -1,10 +1,9 @@
-#include <chrono>
-
 #include "FGarbageCollector.h"
 #include "UObject.h"
 #include "UClass.h"
 #include "FProperty.h"
 
+#include <chrono>
 
 void FGarbageCollector::MarkReference(UObject* InObject, std::vector<UObject*>& OutWorkList)
 {
@@ -131,7 +130,7 @@ void FGarbageCollector::IncrementalPurge(double InTimeLimitMs, FGCStats& OutStat
 
 	std::vector<UObject*>& PendingDeleteObjectList = GetPendingDeleteObjectList();
 
-	while(!PendingDeleteObjectList.empty())
+	while (!PendingDeleteObjectList.empty())
 	{
 		UObject* Current = PendingDeleteObjectList.back();
 		PendingDeleteObjectList.pop_back();
@@ -141,7 +140,9 @@ void FGarbageCollector::IncrementalPurge(double InTimeLimitMs, FGCStats& OutStat
 		++DeleteCount;
 
 		if ((DeleteCount % 100) == 0 && (GetTimeMs() - StartMs) > InTimeLimitMs)
+		{
 			break;
+		}
 	}
 
 	double ElapsedMs = GetTimeMs() - StartMs;
