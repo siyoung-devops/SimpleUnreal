@@ -1,4 +1,5 @@
 #pragma once
+
 #include "FFunction.h"
 #include "TProperty.h"
 
@@ -7,44 +8,37 @@
 #include <sstream>
 #include <stdexcept>
 
-template<typename X>
-X FromString(const std::string& InText)
+template<typename T>
+T FromString(const std::string& InText)
 {
-	X Value = {};
-	TProperty<X> Converter("", 0);
+	T Value = {};
+	TProperty<T> Converter("", 0);
 	Converter.ImportText(&Value, InText);
 	return Value;
-}
-
-template<typename X>
-std::string ToString(const X& InValue)
-{
-	TProperty<X> Converter("", 0);
-	return Converter.ExportText(&InValue);
 }
 
 template<typename T>
 struct TMemberFunctionTraits;
 
-template<typename C, typename... A, typename R>
-struct TMemberFunctionTraits<R(C::*)(A...)>
+template<typename InClassType, typename... InArgTypes, typename InReturnType>
+struct TMemberFunctionTraits<InReturnType(InClassType::*)(InArgTypes...)>
 {
-	using ClassType = C;
+	using ClassType = InClassType;
+	using ReturnType = InReturnType;
 
-	static constexpr size_t ArgsCount = sizeof...(A);
-	using ArgsTuple = std::tuple<std::remove_cvref_t<A>...>;
+	static constexpr size_t ArgsCount = sizeof...(InArgTypes);
+	using ArgsTuple = std::tuple<std::remove_cvref_t<InArgTypes>...>;
 
 	static ArgsTuple Parse(const std::vector<std::string>& InPieces)
 	{
 		size_t Index = 0;
-		return ArgsTuple{ FromString<std::remove_cvref_t<A>>(InPieces[Index++])... };
+		return ArgsTuple{ FromString<std::remove_cvref_t<InArgTypes>>(InPieces[Index++])... };
 	}
-
-	using ReturnType = R;
 };
 
-template<typename C, typename... A, typename R>
-struct TMemberFunctionTraits<R(C::*)(A...)const> :TMemberFunctionTraits<R(C::*)(A...)>
+template<typename InClassType, typename... InArgTypes, typename InReturnType>
+struct TMemberFunctionTraits<InReturnType(InClassType::*)(InArgTypes...) const>
+	: TMemberFunctionTraits<InReturnType(InClassType::*)(InArgTypes...)>
 {
 };
 

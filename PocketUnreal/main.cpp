@@ -1,12 +1,5 @@
 #define NOMINMAX
 
-#include <algorithm>
-#include <chrono>
-#include <iomanip>
-#include <windows.h>
-#include <iostream>
-#include <random>
-
 #include "UClass.h"
 #include "UObject.h"
 #include "UCoworker.h"
@@ -15,16 +8,21 @@
 #include "TFunction.h"
 #include "FGarbageCollector.h"
 
+#include <algorithm>
+#include <iostream>
+#include <random>
+#include <windows.h>
+
 constexpr int ObjectCount = 100000;
-constexpr double LimitTime = 2.0;
+constexpr double PurgeTimeLimitMs = 2.0;
 
 enum class EGCScenario
 {
 	AllAlive,
 	AllDead,
-	Random, 
+	Random,
 	Half,
-	Chain,      
+	Chain,
 	Hierarchy,
 	Cycle,
 	Ring
@@ -32,7 +30,7 @@ enum class EGCScenario
 
 const char* ToString(const EGCScenario InScenario)
 {
-	switch (InScenario)	
+	switch (InScenario)
 	{
 	case EGCScenario::AllAlive:
 		return "AllAlive";
@@ -73,12 +71,12 @@ void MeasureGC(const EGCScenario InScenario)
 {
 	std::cout << "======== " << "[GC 시나리오] : " << ToString(InScenario) << " ========" << std::endl;
 	std::cout << "[GC 전 오브젝트 개수] : " << UObject::GetObjectList().size() << std::endl;
-	
+
 	FGCStats Stats = FGarbageCollector::Collect();
 
 	while (FGarbageCollector::IsPurgePending())
 	{
-		FGarbageCollector::IncrementalPurge(LimitTime, Stats);
+		FGarbageCollector::IncrementalPurge(PurgeTimeLimitMs, Stats);
 	}
 
 	std::cout << "[GC 후 오브젝트 개수] : " << UObject::GetObjectList().size() << std::endl;
@@ -99,11 +97,11 @@ void MeasureGC(const EGCScenario InScenario)
 	std::cout << "[   최대 멈춤   ] : " << MaxPauseTime << " ms" << std::endl;
 }
 
-UCompany* MakeCompany(bool bRoot)
+UCompany* MakeCompany(const bool bInRoot)
 {
 	UCompany* Company = UObject::NewObject<UCompany>();
 
-	if (bRoot)
+	if (bInRoot)
 	{
 		Company->AddToRoot();
 	}
@@ -111,47 +109,47 @@ UCompany* MakeCompany(bool bRoot)
 	return Company;
 }
 
-void AddCoworkers(UCompany* Company, int Count)
+void AddCoworkers(UCompany* InCompany, const int InCount)
 {
-	for (int i = 0; i < Count; ++i)
+	for (int Index = 0; Index < InCount; ++Index)
 	{
 		UCoworker* Coworker = UObject::NewObject<UCoworker>();
-		Company->AddCoworker(Coworker);
+		InCompany->AddCoworker(Coworker);
 	}
 }
 
-UCompany* ChainSubsidiaries(UCompany* Company, int Count)
+UCompany* ChainSubsidiaries(UCompany* InCompany, const int InCount)
 {
-	UCompany* LastCompany = nullptr;
+	UCompany* CurrentCompany = InCompany;
 
-	for (int i = 0; i < Count; ++i)
+	for (int Index = 0; Index < InCount; ++Index)
 	{
 		UCompany* ChildCompany = UObject::NewObject<UCompany>();
-		Company->AddSubsidiary(ChildCompany);
-		Company = LastCompany = ChildCompany;
+		CurrentCompany->AddSubsidiary(ChildCompany);
+		CurrentCompany = ChildCompany;
 	}
 
-	return LastCompany;
+	return CurrentCompany;
 }
 
-std::vector<UCompany*> AddSubsidiaries(UCompany* Company, int Count)
+std::vector<UCompany*> AddSubsidiaries(UCompany* InCompany, const int InCount)
 {
-	std::vector<UCompany*> Children;
+	std::vector<UCompany*> ChildCompanies;
 
-	for (int i = 0; i < Count; ++i)
+	for (int Index = 0; Index < InCount; ++Index)
 	{
 		UCompany* ChildCompany = UObject::NewObject<UCompany>();
-		Company->AddSubsidiary(ChildCompany);
-		Children.push_back(ChildCompany);
+		InCompany->AddSubsidiary(ChildCompany);
+		ChildCompanies.push_back(ChildCompany);
 	}
 
-	return Children;
+	return ChildCompanies;
 }
 
-void FillCoworkers(UCompany* Company)
+void FillCoworkers(UCompany* InCompany)
 {
 	int Count = ObjectCount - static_cast<int>(UObject::GetObjectList().size());
-	AddCoworkers(Company, Count);
+	AddCoworkers(InCompany, Count);
 }
 
 void CleanUpAll()
@@ -164,7 +162,7 @@ void CleanUpAll()
 	FGCStats Stats = FGarbageCollector::Collect();
 	while (FGarbageCollector::IsPurgePending())
 	{
-		FGarbageCollector::IncrementalPurge(LimitTime, Stats);
+		FGarbageCollector::IncrementalPurge(PurgeTimeLimitMs, Stats);
 	}
 }
 
@@ -187,13 +185,13 @@ void PlayGCScenario(const EGCScenario InScenario)
 		break;
 	case EGCScenario::Random:
 		{
-			UCompany* AliveCompany = MakeCompany(true);		
-			UCompany* DeadCompany = MakeCompany(false);		
+			UCompany* AliveCompany = MakeCompany(true);
+			UCompany* DeadCompany = MakeCompany(false);
 
 			std::mt19937 Random(std::random_device{}());
 			std::uniform_int_distribution<int> Coin(0, 1);
 
-			for (int i = 0; i < ObjectCount - 2; ++i)
+			for (int Index = 0; Index < ObjectCount - 2; ++Index)
 			{
 				if (Coin(Random) == 1)
 				{
@@ -209,16 +207,14 @@ void PlayGCScenario(const EGCScenario InScenario)
 	case EGCScenario::Half:
 		{
 			UCompany* AliveCompany = MakeCompany(true);
-			UCompany* DeadCompany = MakeCompany(false);	
+			UCompany* DeadCompany = MakeCompany(false);
 
 			AddCoworkers(AliveCompany, (ObjectCount / 2) - 1);
-			FillCoworkers(DeadCompany);		
+			FillCoworkers(DeadCompany);
 		}
 		break;
 	case EGCScenario::Chain:
 		{
-			// 모회사 → 자회사1 → 자회사2 → ... → 자회사 99,999
-		    // 루트에서 계속 이어져있기 때문에 지워지지 않도록 함. 
 			UCompany* ParentCompany = MakeCompany(true);
 			ChainSubsidiaries(ParentCompany, ObjectCount - 1);
 		}
@@ -226,31 +222,30 @@ void PlayGCScenario(const EGCScenario InScenario)
 	case EGCScenario::Hierarchy:
 		{
 			UCompany* ParentCompany = MakeCompany(true);
-			int CompaniesNums = 10;
-			int CoworkersNums = (ObjectCount - 111) / 110;
-			// 모회사 → 자회사 1 직원 추가 → 손자회사 1..10 직원 추가
-			//        → 자회사 2 직원 추가 → 손자회사 1..10
-			std::vector<UCompany*> ChildrenCompanies = AddSubsidiaries(ParentCompany, CompaniesNums);
-			for (UCompany* ChildCompany : ChildrenCompanies)
+
+			int ChildCount = 10;
+			int CoworkerCount = 900;
+
+			std::vector<UCompany*> ChildCompanies = AddSubsidiaries(ParentCompany, ChildCount);
+			for (UCompany* ChildCompany : ChildCompanies)
 			{
-				AddCoworkers(ChildCompany, CoworkersNums);
-				
-				std::vector<UCompany*> GrandChildren = AddSubsidiaries(ChildCompany, CompaniesNums);
-				for (UCompany* GrandChild : GrandChildren)
+				AddCoworkers(ChildCompany, CoworkerCount);
+
+				std::vector<UCompany*> GrandChildCompanies = AddSubsidiaries(ChildCompany, ChildCount);
+				for (UCompany* GrandChildCompany : GrandChildCompanies)
 				{
-					AddCoworkers(GrandChild, CoworkersNums);
+					AddCoworkers(GrandChildCompany, CoworkerCount);
 				}
 			}
 
-			// 루트에서 끊어서 자회사 삭제 
-			ParentCompany->RemoveSubsidiary(ChildrenCompanies[0]);
+			ParentCompany->RemoveSubsidiary(ChildCompanies[0]);
 
 			FillCoworkers(ParentCompany);
 		}
 		break;
 	case EGCScenario::Cycle:
 		{
-			for(int i = 0; i < ObjectCount / 2; ++i)
+			for (int Index = 0; Index < ObjectCount / 2; ++Index)
 			{
 				UCompany* CompanyA = MakeCompany(false);
 				UCompany* CompanyB = MakeCompany(false);
@@ -275,7 +270,6 @@ void PlayGCScenario(const EGCScenario InScenario)
 	MeasureGC(InScenario);
 	CleanUpAll();
 }
-
 
 int main()
 {

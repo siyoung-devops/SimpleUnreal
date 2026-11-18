@@ -1,9 +1,11 @@
 #pragma once
+
 #include "FProperty.h"
+
 #include <stdexcept>
 #include <type_traits>
 
-template<typename InType>
+template<typename T>
 struct TIsVector : std::false_type {};
 
 template<typename ElementType>
@@ -11,7 +13,6 @@ struct TIsVector<std::vector<ElementType>> : std::true_type {};
 
 template<typename T>
 constexpr bool TIsObjectPointer = std::is_pointer_v<T> && std::is_base_of_v<UObject, std::remove_pointer_t<T>>;
-
 
 template<typename T>
 class TProperty : public FProperty
@@ -87,7 +88,7 @@ public:
 
 		if constexpr (std::is_same_v<T, int>)
 		{
-			if (InValue == "")
+			if (InValue.empty())
 			{
 				return;
 			}
@@ -101,7 +102,7 @@ public:
 		}
 		else if constexpr (std::is_enum_v<T>)
 		{
-			if (InValue == "")
+			if (InValue.empty())
 			{
 				return;
 			}

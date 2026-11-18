@@ -24,7 +24,7 @@ void UObject::CallFunction(const std::string& InCommand)
 	size_t SpaceIndex = InCommand.find(' ');
 
 	std::string FunctionName = InCommand.substr(0, SpaceIndex);
-	std::string Args = "";
+	std::string Args;
 
 	if (SpaceIndex != std::string::npos)
 	{
@@ -42,7 +42,7 @@ void UObject::CallFunction(const std::string& InCommand)
 	{
 		std::string ReturnText = Function->InvokeFromString(this, Args);
 
-		if (ReturnText != "")
+		if (!ReturnText.empty())
 		{
 			std::cout << FunctionName << " Result : " << ReturnText << std::endl;
 		}

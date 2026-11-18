@@ -17,7 +17,7 @@ int UCoworker::GetAge() const
 
 void UCoworker::SetName(const std::string& InName)
 {
-	if (InName == "")
+	if (InName.empty())
 	{
 		return;
 	}

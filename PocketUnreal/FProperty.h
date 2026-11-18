@@ -1,7 +1,9 @@
 #pragma once
-#include <vector>
-#include <string>
+
 #include "UObject.h"
+
+#include <string>
+#include <vector>
 
 enum class EGCReferenceKind
 {
