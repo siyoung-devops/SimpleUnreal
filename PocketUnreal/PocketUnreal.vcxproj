@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FGarbageCollector.cpp" />
+    <ClCompile Include="Generated.cpp" />
     <ClCompile Include="UCompany.cpp" />
     <ClCompile Include="UCoworker.cpp" />
     <ClCompile Include="UClass.cpp" />

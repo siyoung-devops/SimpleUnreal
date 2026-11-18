@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-
 enum class ECoworkerPosition
 {
 	Staff,
@@ -19,20 +18,28 @@ class UCoworker : public UObject
 public:
 	GENERATED_BODY(UCoworker, UObject);
 
-	UFUNCTION(SetAge);
-	UFUNCTION(GetAge);
-	UFUNCTION(SetName);
-	UFUNCTION(AddAge);
-	UFUNCTION(SetInfo);
-
+	UFUNCTION()
 	void SetAge(const int InAge);
+
+	UFUNCTION()
 	int GetAge() const;
+
+	UFUNCTION()
 	void SetName(const std::string& InName);
+
+	UFUNCTION()
 	int AddAge(const int InAge);
+
+	UFUNCTION()
 	void SetInfo(const std::string& InName, const int InAge);
 
 private:
-	UPROPERTY(std::string, Name) = "Henry";
-	UPROPERTY(int, Age) = 40;
-	UPROPERTY(ECoworkerPosition, Position) = ECoworkerPosition::Boss;
+	UPROPERTY()
+	std::string Name = "Henry";
+
+	UPROPERTY()
+	int Age = 40;
+
+	UPROPERTY()
+	ECoworkerPosition Position = ECoworkerPosition::Boss;
 };
