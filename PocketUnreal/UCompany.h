@@ -15,6 +15,9 @@ public:
 	void RemoveSubsidiary(UObject* InSubsidiary);
 
 private:
-	UPROPERTY(std::vector<UObject*>, Coworkers);
-	UPROPERTY(std::vector<UObject*>, Subsidiaries);
+	UPROPERTY()
+	std::vector<UObject*> Coworkers;
+
+	UPROPERTY()
+	std::vector<UObject*> Subsidiaries;
 };
