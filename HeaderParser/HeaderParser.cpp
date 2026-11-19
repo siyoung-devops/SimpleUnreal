@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 #include <Windows.h>
 
@@ -14,7 +15,7 @@ struct FClassInfo
 	std::vector<std::string> FunctionNames;
 };
 
-bool IsWordChar(const char& InChar)
+bool IsWordChar(const char InChar)
 {
 	if (('a' <= InChar && InChar <= 'z')
 		|| ('A' <= InChar && InChar <= 'Z'))
@@ -35,11 +36,11 @@ bool IsWordChar(const char& InChar)
 	return false;
 }
 
-bool IsSpaceChar(const char& InChar)
+bool IsSpaceChar(const char InChar)
 {
-	if (InChar == ' ' ||
-		InChar == '\t' ||
-		InChar == '\n')
+	if (InChar == ' '
+		|| InChar == '\t'
+		|| InChar == '\n')
 	{
 		return true;
 	}
@@ -47,7 +48,7 @@ bool IsSpaceChar(const char& InChar)
 	return false;
 }
 
-bool IsDirectiveChar(const char& InChar)
+bool IsDirectiveChar(const char InChar)
 {
 	if (InChar == '#')
 	{
@@ -71,8 +72,7 @@ std::vector<std::string> Tokenize(const std::string& InText)
 				++CurrentIndex;
 			}
 
-			std::string Word = InText.substr(StartIndex, CurrentIndex - StartIndex);
-			Tokens.push_back(Word);
+			Tokens.push_back(InText.substr(StartIndex, CurrentIndex - StartIndex));
 		}
 		else if (IsSpaceChar(InText[CurrentIndex]))
 		{
@@ -87,8 +87,7 @@ std::vector<std::string> Tokenize(const std::string& InText)
 		}
 		else
 		{
-			std::string Word = InText.substr(CurrentIndex, 1);
-			Tokens.push_back(Word);
+			Tokens.push_back(InText.substr(CurrentIndex, 1));
 
 			++CurrentIndex;
 		}
@@ -117,6 +116,11 @@ bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutCla
 	{
 		if (InTokens[CurrentIndex] == "GENERATED_BODY")
 		{
+			if (ClassName.empty())
+			{
+				std::cout << "클래스 이름 읽기 실패 : " << OutClassInfo.HeaderName << std::endl;
+			}
+
 			OutClassInfo.ClassName = ClassName;
 			OutClassInfo.SuperClassName = SuperClassName;
 		}
@@ -132,8 +136,7 @@ bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutCla
 				break;
 			}
 
-			std::string Name = InTokens[CurrentIndex - 1];
-			OutClassInfo.PropertyNames.push_back(Name);
+			OutClassInfo.PropertyNames.push_back(InTokens[CurrentIndex - 1]);
 		}
 		else if (InTokens[CurrentIndex] == "UFUNCTION")
 		{
@@ -148,8 +151,7 @@ bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutCla
 				break;
 			}
 
-			std::string Name = InTokens[CurrentIndex - 1];
-			OutClassInfo.FunctionNames.push_back(Name);
+			OutClassInfo.FunctionNames.push_back(InTokens[CurrentIndex - 1]);
 		}
 		else if (InTokens[CurrentIndex] == "class")
 		{
@@ -187,15 +189,22 @@ bool LoadFileToString(const std::string& InFilePath, std::string& OutText)
 
 bool CollectClassInfos(const std::string& InFolderPath, std::vector<FClassInfo>& OutClassInfos)
 {
+	if (!std::filesystem::is_directory(InFolderPath))
+	{
+		std::cout << "폴더 없음 : " << InFolderPath << std::endl;
+		return false;
+	}
+
 	for (const std::filesystem::directory_entry& Entry : std::filesystem::directory_iterator(InFolderPath))
 	{
-		std::string HeaderName = Entry.path().filename().string();
-		std::string FilePath = Entry.path().string();
 		std::filesystem::path Extension = Entry.path().extension();
 		if (Extension != ".h")
 		{
 			continue;
 		}
+
+		std::string HeaderName = Entry.path().filename().string();
+		std::string FilePath = Entry.path().string();
 
 		FClassInfo ClassInfo;
 		ClassInfo.HeaderName = HeaderName;
@@ -213,7 +222,7 @@ bool CollectClassInfos(const std::string& InFolderPath, std::vector<FClassInfo>&
 			continue;
 		}
 
-		OutClassInfos.push_back(ClassInfo);
+		OutClassInfos.push_back(std::move(ClassInfo));
 	}
 
 	return true;
