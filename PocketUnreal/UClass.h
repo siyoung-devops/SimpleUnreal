@@ -15,10 +15,9 @@ struct FGCReferenceInfo
 class UClass
 {
 public:
-	UClass(const std::string& InName, const UClass* InSuperClass, size_t InObjectSize)
+	UClass(const std::string& InName, const UClass* InSuperClass)
 		: Name(InName)
 		, SuperClass(InSuperClass)
-		, ObjectSize(InObjectSize)
 	{
 		if (SuperClass != nullptr)
 		{
@@ -46,7 +45,6 @@ public:
 private:
 	std::string Name;
 	const UClass* SuperClass = nullptr;
-	size_t ObjectSize = 0;
 
 	std::vector<FProperty*> Properties;
 	std::vector<FFunction*> Functions;

@@ -5,6 +5,8 @@
 
 #include <chrono>
 
+constexpr int TimeCheckInterval = 100;
+
 void FGarbageCollector::MarkReference(UObject* InObject, std::vector<UObject*>& OutWorkList)
 {
 	if (InObject == nullptr)
@@ -139,7 +141,7 @@ void FGarbageCollector::IncrementalPurge(double InTimeLimitMs, FGCStats& OutStat
 
 		++DeleteCount;
 
-		if ((DeleteCount % 100) == 0 && (GetTimeMs() - StartMs) > InTimeLimitMs)
+		if ((DeleteCount % TimeCheckInterval) == 0 && (GetTimeMs() - StartMs) > InTimeLimitMs)
 		{
 			break;
 		}

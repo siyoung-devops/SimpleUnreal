@@ -253,7 +253,7 @@ bool WriteGeneratedFile(const std::string& InFilePath, const std::vector<FClassI
 		File << "{\n";
 
 		File << "\tstatic UClass ClassInstance = UClass(" << "\"" << ClassInfo.ClassName << "\", "
-			<< ClassInfo.SuperClassName << "::StaticClass(), sizeof(" << ClassInfo.ClassName << "));\n";
+			<< ClassInfo.SuperClassName << "::StaticClass());\n";
 
 		File << "\tstatic bool bRegistered = false;\n" << "\tif (!bRegistered)\n" << "\t{\n";
 		for (const std::string& PropertyName : ClassInfo.PropertyNames)
