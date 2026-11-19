@@ -2,10 +2,8 @@
 
 #include "UClass.h"
 
-#define GENERATED_BODY(Class, SuperClass) \
+#define GENERATED_BODY() \
 public: \
-	using ThisClass = Class; \
-	using Super = SuperClass; \
 	static const UClass* StaticClass()
 
 #define UPROPERTY()

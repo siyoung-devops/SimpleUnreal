@@ -16,7 +16,7 @@ enum class ECoworkerPosition
 class UCoworker : public UObject
 {
 public:
-	GENERATED_BODY(UCoworker, UObject);
+	GENERATED_BODY();
 
 	UFUNCTION()
 	void SetAge(const int InAge);

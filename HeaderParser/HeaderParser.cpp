@@ -9,6 +9,7 @@ struct FClassInfo
 {
 	std::string HeaderName;
 	std::string ClassName;
+	std::string SuperClassName;
 	std::vector<std::string> PropertyNames;
 	std::vector<std::string> FunctionNames;
 };
@@ -96,22 +97,39 @@ std::vector<std::string> Tokenize(const std::string& InText)
 	return Tokens;
 }
 
+/*
+public: \
+	using ThisClass = Class; \
+	using Super = SuperClass; \
+
+class UCoworker : public UObject
+{
+public:
+
+*/
+
 bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutClassInfo)
 {
 	size_t CurrentIndex = 0;
+	std::string ClassName;
+	std::string SuperClassName;
 	while (CurrentIndex < InTokens.size())
 	{
 		if (InTokens[CurrentIndex] == "GENERATED_BODY")
 		{
-			CurrentIndex += 2;
-			std::string ClassName = InTokens[CurrentIndex];
 			OutClassInfo.ClassName = ClassName;
+			OutClassInfo.SuperClassName = SuperClassName;
 		}
 		else if (InTokens[CurrentIndex] == "UPROPERTY")
 		{
-			while (InTokens[CurrentIndex] != "=" && InTokens[CurrentIndex] != ";")
+			while (CurrentIndex < InTokens.size() && InTokens[CurrentIndex] != "=" && InTokens[CurrentIndex] != ";")
 			{
 				++CurrentIndex;
+			}
+
+			if (CurrentIndex >= InTokens.size())
+			{
+				break;
 			}
 
 			std::string Name = InTokens[CurrentIndex - 1];
@@ -120,13 +138,27 @@ bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutCla
 		else if (InTokens[CurrentIndex] == "UFUNCTION")
 		{
 			CurrentIndex += 3;
-			while (InTokens[CurrentIndex] != "(")
+			while (CurrentIndex < InTokens.size() && InTokens[CurrentIndex] != "(")
 			{
 				++CurrentIndex;
 			}
 
+			if (CurrentIndex >= InTokens.size())
+			{
+				break;
+			}
+
 			std::string Name = InTokens[CurrentIndex - 1];
 			OutClassInfo.FunctionNames.push_back(Name);
+		}
+		else if (InTokens[CurrentIndex] == "class")
+		{
+			// class UCoworker : public UObject
+			if (CurrentIndex + 4 < InTokens.size() && InTokens[CurrentIndex + 2] == ":")
+			{
+				ClassName = InTokens[CurrentIndex + 1];
+				SuperClassName = InTokens[CurrentIndex + 4];
+			}
 		}
 
 		++CurrentIndex;
@@ -212,19 +244,19 @@ bool WriteGeneratedFile(const std::string& InFilePath, const std::vector<FClassI
 		File << "{\n";
 
 		File << "\tstatic UClass ClassInstance = UClass(" << "\"" << ClassInfo.ClassName << "\", "
-			<< "Super::StaticClass(), sizeof(" << ClassInfo.ClassName << "));\n";
+			<< ClassInfo.SuperClassName << "::StaticClass(), sizeof(" << ClassInfo.ClassName << "));\n";
 
 		File << "\tstatic bool bRegistered = false;\n" << "\tif (!bRegistered)\n" << "\t{\n";
 		for (const std::string& PropertyName : ClassInfo.PropertyNames)
 		{
 			File << "\t\tClassInstance.AddProperty(new TProperty<decltype(" << ClassInfo.ClassName << "::" << PropertyName << ")>("
-				<< "\"" << PropertyName << "\", offsetof(ThisClass, " << PropertyName << ")));\n";
+				<< "\"" << PropertyName << "\", offsetof(" << ClassInfo.ClassName << ", " << PropertyName << ")));\n";
 		}
 
 		for (const std::string& FunctionName : ClassInfo.FunctionNames)
 		{
 			File << "\t\tClassInstance.AddFunction(new TFunction<decltype(&" << ClassInfo.ClassName << "::" << FunctionName << ")>("
-				<< "\"" << FunctionName << "\", &ThisClass::" << FunctionName << "));\n";
+				<< "\"" << FunctionName << "\", &" << ClassInfo.ClassName << "::" << FunctionName << "));\n";
 		}
 		File << "\t\tbRegistered = true;\n" << "\t}\n";
 
