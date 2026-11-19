@@ -7,7 +7,7 @@
 
 const UClass* UCompany::StaticClass()
 {
-	static UClass ClassInstance = UClass("UCompany", UObject::StaticClass(), sizeof(UCompany));
+	static UClass ClassInstance = UClass("UCompany", UObject::StaticClass());
 	static bool bRegistered = false;
 	if (!bRegistered)
 	{
@@ -20,7 +20,7 @@ const UClass* UCompany::StaticClass()
 
 const UClass* UCoworker::StaticClass()
 {
-	static UClass ClassInstance = UClass("UCoworker", UObject::StaticClass(), sizeof(UCoworker));
+	static UClass ClassInstance = UClass("UCoworker", UObject::StaticClass());
 	static bool bRegistered = false;
 	if (!bRegistered)
 	{

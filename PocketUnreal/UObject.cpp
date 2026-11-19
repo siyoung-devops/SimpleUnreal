@@ -5,9 +5,7 @@
 
 const UClass* UObject::StaticClass()
 {
-	static UClass ClassInstance = UClass(
-		"UObject", nullptr, sizeof(UObject)
-	);
+	static UClass ClassInstance = UClass("UObject", nullptr);
 
 	return &ClassInstance;
 }
