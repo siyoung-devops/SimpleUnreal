@@ -8,7 +8,7 @@
 class UCompany : public UObject
 {
 public:
-	GENERATED_BODY(UCompany, UObject);
+	GENERATED_BODY();
 
 	void AddCoworker(UObject* InCoworker);
 	void AddSubsidiary(UObject* InSubsidiary);

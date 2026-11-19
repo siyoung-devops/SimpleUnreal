@@ -7,12 +7,12 @@
 
 const UClass* UCompany::StaticClass()
 {
-	static UClass ClassInstance = UClass("UCompany", Super::StaticClass(), sizeof(UCompany));
+	static UClass ClassInstance = UClass("UCompany", UObject::StaticClass(), sizeof(UCompany));
 	static bool bRegistered = false;
 	if (!bRegistered)
 	{
-		ClassInstance.AddProperty(new TProperty<decltype(UCompany::Coworkers)>("Coworkers", offsetof(ThisClass, Coworkers)));
-		ClassInstance.AddProperty(new TProperty<decltype(UCompany::Subsidiaries)>("Subsidiaries", offsetof(ThisClass, Subsidiaries)));
+		ClassInstance.AddProperty(new TProperty<decltype(UCompany::Coworkers)>("Coworkers", offsetof(UCompany, Coworkers)));
+		ClassInstance.AddProperty(new TProperty<decltype(UCompany::Subsidiaries)>("Subsidiaries", offsetof(UCompany, Subsidiaries)));
 		bRegistered = true;
 	}
 	return &ClassInstance;
@@ -20,18 +20,18 @@ const UClass* UCompany::StaticClass()
 
 const UClass* UCoworker::StaticClass()
 {
-	static UClass ClassInstance = UClass("UCoworker", Super::StaticClass(), sizeof(UCoworker));
+	static UClass ClassInstance = UClass("UCoworker", UObject::StaticClass(), sizeof(UCoworker));
 	static bool bRegistered = false;
 	if (!bRegistered)
 	{
-		ClassInstance.AddProperty(new TProperty<decltype(UCoworker::Name)>("Name", offsetof(ThisClass, Name)));
-		ClassInstance.AddProperty(new TProperty<decltype(UCoworker::Age)>("Age", offsetof(ThisClass, Age)));
-		ClassInstance.AddProperty(new TProperty<decltype(UCoworker::Position)>("Position", offsetof(ThisClass, Position)));
-		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::SetAge)>("SetAge", &ThisClass::SetAge));
-		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::GetAge)>("GetAge", &ThisClass::GetAge));
-		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::SetName)>("SetName", &ThisClass::SetName));
-		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::AddAge)>("AddAge", &ThisClass::AddAge));
-		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::SetInfo)>("SetInfo", &ThisClass::SetInfo));
+		ClassInstance.AddProperty(new TProperty<decltype(UCoworker::Name)>("Name", offsetof(UCoworker, Name)));
+		ClassInstance.AddProperty(new TProperty<decltype(UCoworker::Age)>("Age", offsetof(UCoworker, Age)));
+		ClassInstance.AddProperty(new TProperty<decltype(UCoworker::Position)>("Position", offsetof(UCoworker, Position)));
+		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::SetAge)>("SetAge", &UCoworker::SetAge));
+		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::GetAge)>("GetAge", &UCoworker::GetAge));
+		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::SetName)>("SetName", &UCoworker::SetName));
+		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::AddAge)>("AddAge", &UCoworker::AddAge));
+		ClassInstance.AddFunction(new TFunction<decltype(&UCoworker::SetInfo)>("SetInfo", &UCoworker::SetInfo));
 		bRegistered = true;
 	}
 	return &ClassInstance;
