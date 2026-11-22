@@ -4,14 +4,6 @@
 #include "UObject.h"
 
 #include <string>
-#include <vector>
-
-enum class ECoworkerPosition
-{
-	Staff,
-	Manager,
-	Boss
-};
 
 class UCoworker : public UObject
 {
@@ -33,13 +25,22 @@ public:
 	UFUNCTION()
 	void SetInfo(const std::string& InName, const int InAge);
 
+	UFUNCTION()
+	void SetHeight(const float InHeight);
+
+	UFUNCTION()
+	void SetWorking(const bool bInWorking);
+
 private:
 	UPROPERTY()
-	std::string Name = "Henry";
+	std::string Name = "Lee";
 
 	UPROPERTY()
 	int Age = 40;
 
 	UPROPERTY()
-	ECoworkerPosition Position = ECoworkerPosition::Boss;
+	float Height = 175.5f;
+
+	UPROPERTY()
+	bool bWorking = true;
 };

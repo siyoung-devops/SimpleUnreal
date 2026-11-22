@@ -10,29 +10,26 @@ const UClass* UObject::StaticClass()
 	return &ClassInstance;
 }
 
-std::vector<UObject*>& UObject::GetObjectList()
-{
-	static std::vector<UObject*> ObjectList;
-
-	return ObjectList;
-}
-
 void UObject::CallFunction(const std::string& InCommand)
 {
-	size_t SpaceIndex = InCommand.find(' ');
+	size_t NameEndIndex = 0;
+	while (NameEndIndex < InCommand.size() && InCommand[NameEndIndex] != ' ')
+	{
+		++NameEndIndex;
+	}
 
-	std::string FunctionName = InCommand.substr(0, SpaceIndex);
+	std::string FunctionName = InCommand.substr(0, NameEndIndex);
 	std::string Args;
 
-	if (SpaceIndex != std::string::npos)
+	if (NameEndIndex < InCommand.size())
 	{
-		Args = InCommand.substr(SpaceIndex + 1);
+		Args = InCommand.substr(NameEndIndex + 1);
 	}
 
 	const FFunction* Function = GetClass()->FindFunctionByName(FunctionName);
 	if (Function == nullptr)
 	{
-		std::cout << "함수없음" << std::endl;
+		std::cout << "함수 없음 : " << FunctionName << std::endl;
 		return;
 	}
 
@@ -47,7 +44,6 @@ void UObject::CallFunction(const std::string& InCommand)
 	}
 	catch (const std::exception& Error)
 	{
-		std::cout << "인자 오류: " << Error.what() << std::endl;
-		return;
+		std::cout << "인자 오류 : " << Error.what() << std::endl;
 	}
 }

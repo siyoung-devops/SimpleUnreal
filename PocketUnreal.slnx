@@ -4,5 +4,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="HeaderParser/HeaderParser.vcxproj" Id="2f2674ba-1d13-4658-b16f-c4088ce37dbb" />
-  <Project Path="PocketUnreal/PocketUnreal.vcxproj" Id="ae858251-e982-44a4-ae95-91482131c3d4" />
+  <Project Path="PocketUnreal/PocketUnreal.vcxproj" Id="ae858251-e982-44a4-ae95-91482131c3d4">
+    <BuildDependency Project="HeaderParser/HeaderParser.vcxproj" />
+  </Project>
 </Solution>

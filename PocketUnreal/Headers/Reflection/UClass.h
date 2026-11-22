@@ -19,10 +19,6 @@ public:
 		: Name(InName)
 		, SuperClass(InSuperClass)
 	{
-		if (SuperClass != nullptr)
-		{
-			ReferenceSchema = SuperClass->GetReferenceSchema();
-		}
 	}
 
 	~UClass();

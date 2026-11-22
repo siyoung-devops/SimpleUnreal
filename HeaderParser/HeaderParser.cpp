@@ -50,7 +50,8 @@ bool IsSpaceChar(const char InChar)
 
 bool IsDirectiveChar(const char InChar)
 {
-	if (InChar == '#')
+	if (InChar == '#'
+		|| InChar == '/')
 	{
 		return true;
 	}
@@ -95,17 +96,6 @@ std::vector<std::string> Tokenize(const std::string& InText)
 
 	return Tokens;
 }
-
-/*
-public: \
-	using ThisClass = Class; \
-	using Super = SuperClass; \
-
-class UCoworker : public UObject
-{
-public:
-
-*/
 
 bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutClassInfo)
 {
@@ -155,7 +145,6 @@ bool ParseClassInfo(const std::vector<std::string>& InTokens, FClassInfo& OutCla
 		}
 		else if (InTokens[CurrentIndex] == "class")
 		{
-			// class UCoworker : public UObject
 			if (CurrentIndex + 4 < InTokens.size() && InTokens[CurrentIndex + 2] == ":")
 			{
 				ClassName = InTokens[CurrentIndex + 1];
@@ -195,7 +184,7 @@ bool CollectClassInfos(const std::string& InFolderPath, std::vector<FClassInfo>&
 		return false;
 	}
 
-	for (const std::filesystem::directory_entry& Entry : std::filesystem::directory_iterator(InFolderPath))
+	for (const std::filesystem::directory_entry& Entry : std::filesystem::recursive_directory_iterator(InFolderPath))
 	{
 		std::filesystem::path Extension = Entry.path().extension();
 		if (Extension != ".h")
@@ -212,13 +201,19 @@ bool CollectClassInfos(const std::string& InFolderPath, std::vector<FClassInfo>&
 		std::string Text;
 		if (!LoadFileToString(FilePath, Text))
 		{
-			std::cout << "열기 실패" << std::endl;
+			std::cout << "열기 실패 : " << HeaderName << std::endl;
 			return false;
 		}
 
 		std::vector<std::string> Tokens = Tokenize(Text);
 		if (!ParseClassInfo(Tokens, ClassInfo))
 		{
+			if (!ClassInfo.PropertyNames.empty() || !ClassInfo.FunctionNames.empty())
+			{
+				std::cout << "GENERATED_BODY 없음 : " << HeaderName << std::endl;
+				return false;
+			}
+
 			continue;
 		}
 
@@ -241,7 +236,7 @@ bool WriteGeneratedFile(const std::string& InFilePath, const std::vector<FClassI
 		File << "#include \"" << ClassInfo.HeaderName << "\"\n";
 	}
 
-	File << "#include \"TProperty.h\"\n";
+	File << "#include \"CreateProperty.h\"\n";
 	File << "#include \"TFunction.h\"\n";
 	File << "\n";
 	File << "#include <cstddef>\n";
@@ -258,13 +253,13 @@ bool WriteGeneratedFile(const std::string& InFilePath, const std::vector<FClassI
 		File << "\tstatic bool bRegistered = false;\n" << "\tif (!bRegistered)\n" << "\t{\n";
 		for (const std::string& PropertyName : ClassInfo.PropertyNames)
 		{
-			File << "\t\tClassInstance.AddProperty(new TProperty<decltype(" << ClassInfo.ClassName << "::" << PropertyName << ")>("
+			File << "\t\tClassInstance.AddProperty(CreateProperty<decltype(" << ClassInfo.ClassName << "::" << PropertyName << ")>("
 				<< "\"" << PropertyName << "\", offsetof(" << ClassInfo.ClassName << ", " << PropertyName << ")));\n";
 		}
 
 		for (const std::string& FunctionName : ClassInfo.FunctionNames)
 		{
-			File << "\t\tClassInstance.AddFunction(new TFunction<decltype(&" << ClassInfo.ClassName << "::" << FunctionName << ")>("
+			File << "\t\tClassInstance.AddFunction(CreateFunction("
 				<< "\"" << FunctionName << "\", &" << ClassInfo.ClassName << "::" << FunctionName << "));\n";
 		}
 		File << "\t\tbRegistered = true;\n" << "\t}\n";
@@ -281,13 +276,13 @@ int main()
 	SetConsoleOutputCP(CP_UTF8);
 
 	std::vector<FClassInfo> ClassInfos;
-	if (!CollectClassInfos("../PocketUnreal", ClassInfos))
+	if (!CollectClassInfos("../PocketUnreal/Headers", ClassInfos))
 	{
 		std::cout << "파싱 실패" << std::endl;
 		return 1;
 	}
 
-	if (!WriteGeneratedFile("../PocketUnreal/Generated.cpp", ClassInfos))
+	if (!WriteGeneratedFile("../PocketUnreal/Source/Generated.cpp", ClassInfos))
 	{
 		std::cout << "Generated 실패" << std::endl;
 		return 1;

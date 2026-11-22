@@ -1,13 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
+    <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
+    <Filter Include="Headers">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Headers\Reflection">
+      <UniqueIdentifier>{3B6E2A41-9C0D-4F7E-A1B2-5D8C7E9F0A11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\RPC">
+      <UniqueIdentifier>{6D1F4B72-2E3A-4C5B-8D9E-0F1A2B3C4D22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\GC">
+      <UniqueIdentifier>{8A2C5E93-4F6B-4D7C-9E0F-1A2B3C4D5E33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Reflection">
+      <UniqueIdentifier>{1C7D3F84-5A6B-4E8C-A0B1-2C3D4E5F6A44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RPC">
+      <UniqueIdentifier>{4E8F6A95-7B8C-4F9D-B1C2-3D4E5F6A7B55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\GC">
+      <UniqueIdentifier>{9F0A7B06-8C9D-4A0E-C2D3-4E5F6A7B8C66}</UniqueIdentifier>
     </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -15,58 +33,103 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="UObject.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\UObject.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="UClass.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\Reflection\UClass.cpp">
+      <Filter>Source\Reflection</Filter>
     </ClCompile>
-    <ClCompile Include="UCoworker.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\UCoworker.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="UCompany.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\UCompany.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="FGarbageCollector.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\GC\FGarbageCollector.cpp">
+      <Filter>Source\GC</Filter>
     </ClCompile>
-    <ClCompile Include="Generated.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Source\RPC\FFunction.cpp">
+      <Filter>Source\RPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GC\FObjectArray.cpp">
+      <Filter>Source\GC</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Generated.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\FIntProperty.cpp">
+      <Filter>Source\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\FStrProperty.cpp">
+      <Filter>Source\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\FObjectProperty.cpp">
+      <Filter>Source\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\FArrayProperty.cpp">
+      <Filter>Source\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\FFloatProperty.cpp">
+      <Filter>Source\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Reflection\FBoolProperty.cpp">
+      <Filter>Source\Reflection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UObject.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\UObject.h">
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="UClass.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\Reflection\UClass.h">
+      <Filter>Headers\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="FProperty.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\Reflection\FProperty.h">
+      <Filter>Headers\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="UCoworker.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\UCoworker.h">
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="UCompany.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\UCompany.h">
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TProperty.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\Reflection\ReflectionMacro.h">
+      <Filter>Headers\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="ReflectionMacro.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\RPC\FFunction.h">
+      <Filter>Headers\RPC</Filter>
     </ClInclude>
-    <ClInclude Include="FFunction.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\RPC\TFunction.h">
+      <Filter>Headers\RPC</Filter>
     </ClInclude>
-    <ClInclude Include="TFunction.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\GC\FGarbageCollector.h">
+      <Filter>Headers\GC</Filter>
     </ClInclude>
-    <ClInclude Include="FGarbageCollector.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Headers\GC\FObjectArray.h">
+      <Filter>Headers\GC</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\FIntProperty.h">
+      <Filter>Headers\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\FStrProperty.h">
+      <Filter>Headers\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\FObjectProperty.h">
+      <Filter>Headers\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\FArrayProperty.h">
+      <Filter>Headers\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\CreateProperty.h">
+      <Filter>Headers\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\FFloatProperty.h">
+      <Filter>Headers\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Reflection\FBoolProperty.h">
+      <Filter>Headers\Reflection</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

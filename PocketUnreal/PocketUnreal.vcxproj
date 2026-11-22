@@ -78,6 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(ProjectDir)Headers\Reflection;$(ProjectDir)Headers\RPC;$(ProjectDir)Headers\GC;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -97,6 +98,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(ProjectDir)Headers\Reflection;$(ProjectDir)Headers\RPC;$(ProjectDir)Headers\GC;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,6 +116,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(ProjectDir)Headers\Reflection;$(ProjectDir)Headers\RPC;$(ProjectDir)Headers\GC;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +136,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Headers;$(ProjectDir)Headers\Reflection;$(ProjectDir)Headers\RPC;$(ProjectDir)Headers\GC;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,26 +146,47 @@
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <PreBuildEvent>
+      <Command>"$(OutDir)HeaderParser.exe"</Command>
+      <StdOutEncoding>UTF-8</StdOutEncoding>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FGarbageCollector.cpp" />
-    <ClCompile Include="Generated.cpp" />
-    <ClCompile Include="UCompany.cpp" />
-    <ClCompile Include="UCoworker.cpp" />
-    <ClCompile Include="UClass.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="UObject.cpp" />
+    <ClCompile Include="Source\GC\FGarbageCollector.cpp" />
+    <ClCompile Include="Source\RPC\FFunction.cpp" />
+    <ClCompile Include="Source\GC\FObjectArray.cpp" />
+    <ClCompile Include="Source\Generated.cpp" />
+    <ClCompile Include="Source\UCompany.cpp" />
+    <ClCompile Include="Source\UCoworker.cpp" />
+    <ClCompile Include="Source\Reflection\UClass.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\UObject.cpp" />
+    <ClCompile Include="Source\Reflection\FIntProperty.cpp" />
+    <ClCompile Include="Source\Reflection\FStrProperty.cpp" />
+    <ClCompile Include="Source\Reflection\FObjectProperty.cpp" />
+    <ClCompile Include="Source\Reflection\FArrayProperty.cpp" />
+    <ClCompile Include="Source\Reflection\FFloatProperty.cpp" />
+    <ClCompile Include="Source\Reflection\FBoolProperty.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FFunction.h" />
-    <ClInclude Include="FGarbageCollector.h" />
-    <ClInclude Include="FProperty.h" />
-    <ClInclude Include="ReflectionMacro.h" />
-    <ClInclude Include="TFunction.h" />
-    <ClInclude Include="TProperty.h" />
-    <ClInclude Include="UCompany.h" />
-    <ClInclude Include="UCoworker.h" />
-    <ClInclude Include="UClass.h" />
-    <ClInclude Include="UObject.h" />
+    <ClInclude Include="Headers\RPC\FFunction.h" />
+    <ClInclude Include="Headers\GC\FGarbageCollector.h" />
+    <ClInclude Include="Headers\GC\FObjectArray.h" />
+    <ClInclude Include="Headers\Reflection\FProperty.h" />
+    <ClInclude Include="Headers\Reflection\ReflectionMacro.h" />
+    <ClInclude Include="Headers\RPC\TFunction.h" />
+    <ClInclude Include="Headers\UCompany.h" />
+    <ClInclude Include="Headers\UCoworker.h" />
+    <ClInclude Include="Headers\Reflection\UClass.h" />
+    <ClInclude Include="Headers\UObject.h" />
+    <ClInclude Include="Headers\Reflection\FIntProperty.h" />
+    <ClInclude Include="Headers\Reflection\FStrProperty.h" />
+    <ClInclude Include="Headers\Reflection\FObjectProperty.h" />
+    <ClInclude Include="Headers\Reflection\FArrayProperty.h" />
+    <ClInclude Include="Headers\Reflection\FFloatProperty.h" />
+    <ClInclude Include="Headers\Reflection\FBoolProperty.h" />
+    <ClInclude Include="Headers\Reflection\CreateProperty.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

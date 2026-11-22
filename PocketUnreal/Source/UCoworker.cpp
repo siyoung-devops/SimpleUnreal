@@ -41,3 +41,18 @@ void UCoworker::SetInfo(const std::string& InName, const int InAge)
 	SetName(InName);
 	SetAge(InAge);
 }
+
+void UCoworker::SetHeight(const float InHeight)
+{
+	if (InHeight < 0.0f)
+	{
+		return;
+	}
+
+	Height = InHeight;
+}
+
+void UCoworker::SetWorking(const bool bInWorking)
+{
+	bWorking = bInWorking;
+}
