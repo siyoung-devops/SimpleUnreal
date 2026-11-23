@@ -12,5 +12,6 @@ public:
 
 	std::string ExportText(const void* InContainer) const override;
 	void ImportText(void* InContainer, const std::string& InValue) const override;
+
 	std::string GetTypeName() const override;
 };

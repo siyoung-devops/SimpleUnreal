@@ -29,6 +29,7 @@ void UCompany::RemoveSubsidiary(UObject* InSubsidiary)
 		{
 			Subsidiaries[Index] = Subsidiaries.back();
 			Subsidiaries.pop_back();
+
 			return;
 		}
 

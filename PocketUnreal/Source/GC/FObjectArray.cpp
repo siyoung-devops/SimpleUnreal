@@ -9,12 +9,13 @@ FObjectArray& FObjectArray::Get()
 
 FObjectArray::FObjectArray()
 {
-	ObjectList.reserve(ReserveObjectCount);
+	ItemList.reserve(ReserveObjectCount);
+	FreeIndexList.reserve(ReserveObjectCount);
 }
 
 int FObjectArray::GetObjectCount() const
 {
-	return static_cast<int>(ObjectList.size() - FreeIndexList.size());
+	return static_cast<int>(ItemList.size() - FreeIndexList.size());
 }
 
 int FObjectArray::AddObject(UObject* InObject)
@@ -25,14 +26,14 @@ int FObjectArray::AddObject(UObject* InObject)
 	int Index = 0;
 	if (FreeIndexList.empty())
 	{
-		Index = static_cast<int>(ObjectList.size());
-		ObjectList.push_back(Item);
+		Index = static_cast<int>(ItemList.size());
+		ItemList.push_back(Item);
 	}
 	else
 	{
 		Index = FreeIndexList.back();
 		FreeIndexList.pop_back();
-		ObjectList[Index] = Item;
+		ItemList[Index] = Item;
 	}
 
 	return Index;
@@ -40,6 +41,6 @@ int FObjectArray::AddObject(UObject* InObject)
 
 void FObjectArray::RemoveObject(const int InIndex)
 {
-	ObjectList[InIndex] = FObjectItem();
+	ItemList[InIndex] = FObjectItem();
 	FreeIndexList.push_back(InIndex);
 }

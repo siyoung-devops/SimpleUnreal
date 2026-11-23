@@ -12,18 +12,13 @@ const UClass* UObject::StaticClass()
 
 void UObject::CallFunction(const std::string& InCommand)
 {
-	size_t NameEndIndex = 0;
-	while (NameEndIndex < InCommand.size() && InCommand[NameEndIndex] != ' ')
-	{
-		++NameEndIndex;
-	}
-
-	std::string FunctionName = InCommand.substr(0, NameEndIndex);
+	size_t SpaceIndex = InCommand.find(' ');
+	std::string FunctionName = InCommand.substr(0, SpaceIndex);
 	std::string Args;
 
-	if (NameEndIndex < InCommand.size())
+	if (SpaceIndex != std::string::npos)
 	{
-		Args = InCommand.substr(NameEndIndex + 1);
+		Args = InCommand.substr(SpaceIndex + 1);
 	}
 
 	const FFunction* Function = GetClass()->FindFunctionByName(FunctionName);

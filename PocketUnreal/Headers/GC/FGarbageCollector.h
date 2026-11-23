@@ -16,7 +16,7 @@ public:
 	static FGCStats Collect();
 
 private:
-	static void MarkReference(UObject* InObject, std::vector<FObjectItem>& InObjectList, std::vector<UObject*>& OutWorkList);
+	static void MarkReference(UObject* InObject, std::vector<FObjectItem>& InItemList, std::vector<UObject*>& OutWorkList);
 	static void Mark();
 	static void Sweep();
 	static double GetTimeMs();

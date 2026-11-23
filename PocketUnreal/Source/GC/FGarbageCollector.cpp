@@ -5,14 +5,14 @@
 
 #include <chrono>
 
-void FGarbageCollector::MarkReference(UObject* InObject, std::vector<FObjectItem>& InObjectList, std::vector<UObject*>& OutWorkList)
+void FGarbageCollector::MarkReference(UObject* InObject, std::vector<FObjectItem>& InItemList, std::vector<UObject*>& OutWorkList)
 {
 	if (InObject == nullptr)
 	{
 		return;
 	}
 
-	FObjectItem& Item = InObjectList[InObject->GetInternalIndex()];
+	FObjectItem& Item = InItemList[InObject->GetInternalIndex()];
 	if (!Item.bMarked)
 	{
 		Item.bMarked = true;
@@ -23,11 +23,11 @@ void FGarbageCollector::MarkReference(UObject* InObject, std::vector<FObjectItem
 void FGarbageCollector::Mark()
 {
 	std::vector<UObject*> WorkList;
-	std::vector<FObjectItem>& ObjectList = FObjectArray::Get().GetObjectList();
+	std::vector<FObjectItem>& ItemList = FObjectArray::Get().GetItemList();
 
-	WorkList.reserve(ObjectList.size());
+	WorkList.reserve(ItemList.size());
 
-	for (FObjectItem& Item : ObjectList)
+	for (FObjectItem& Item : ItemList)
 	{
 		if (Item.Object != nullptr && Item.bRooted)
 		{
@@ -52,7 +52,7 @@ void FGarbageCollector::Mark()
 				case EGCReferenceKind::Object:
 					{
 						UObject* RefObject = *(reinterpret_cast<UObject* const*>(MemberAddress));
-						MarkReference(RefObject, ObjectList, WorkList);
+						MarkReference(RefObject, ItemList, WorkList);
 					}
 					break;
 				case EGCReferenceKind::ObjectArray:
@@ -60,7 +60,7 @@ void FGarbageCollector::Mark()
 						const std::vector<UObject*>* RefObjectList = reinterpret_cast<const std::vector<UObject*>*>(MemberAddress);
 						for (UObject* RefObject : *RefObjectList)
 						{
-							MarkReference(RefObject, ObjectList, WorkList);
+							MarkReference(RefObject, ItemList, WorkList);
 						}
 					}
 					break;
@@ -73,11 +73,11 @@ void FGarbageCollector::Mark()
 void FGarbageCollector::Sweep()
 {
 	FObjectArray& ObjectArray = FObjectArray::Get();
-	std::vector<FObjectItem>& ObjectList = ObjectArray.GetObjectList();
+	std::vector<FObjectItem>& ItemList = ObjectArray.GetItemList();
 
-	for (int Index = 0; Index < static_cast<int>(ObjectList.size()); ++Index)
+	for (int Index = 0; Index < static_cast<int>(ItemList.size()); ++Index)
 	{
-		FObjectItem& Item = ObjectList[Index];
+		FObjectItem& Item = ItemList[Index];
 		if (Item.Object == nullptr)
 		{
 			continue;

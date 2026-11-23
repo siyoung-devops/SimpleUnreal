@@ -24,13 +24,13 @@ public:
 	int AddObject(UObject* InObject);
 	void RemoveObject(const int InIndex);
 
-	FObjectItem& GetItem(const int InIndex) { return ObjectList[InIndex]; }
-	std::vector<FObjectItem>& GetObjectList() { return ObjectList; }
+	FObjectItem& GetItem(const int InIndex) { return ItemList[InIndex]; }
+	std::vector<FObjectItem>& GetItemList() { return ItemList; }
 	int GetObjectCount() const;
 
 private:
 	FObjectArray();
 
-	std::vector<FObjectItem> ObjectList;
+	std::vector<FObjectItem> ItemList;
 	std::vector<int> FreeIndexList;
 };

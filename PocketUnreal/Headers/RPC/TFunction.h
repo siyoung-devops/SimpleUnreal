@@ -14,6 +14,7 @@ T FromString(const std::string& InText)
 	T Value = {};
 	static std::unique_ptr<FProperty> TypeProperty(CreateProperty<T>("", 0));
 	TypeProperty->ImportText(&Value, InText);
+
 	return Value;
 }
 

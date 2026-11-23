@@ -101,7 +101,7 @@ void FillCoworkers(UCompany* InCompany)
 
 void CleanUpAll()
 {
-	for (const FObjectItem& Item : FObjectArray::Get().GetObjectList())
+	for (const FObjectItem& Item : FObjectArray::Get().GetItemList())
 	{
 		if (Item.Object != nullptr)
 		{
