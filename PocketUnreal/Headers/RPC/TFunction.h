@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 #include <type_traits>
-#include <tuple>
+#include <utility>
 
 template<typename T>
 T FromString(const std::string& InText)
@@ -14,7 +14,6 @@ T FromString(const std::string& InText)
 	T Value = {};
 	static std::unique_ptr<FProperty> TypeProperty(CreateProperty<T>("", 0));
 	TypeProperty->ImportText(&Value, InText);
-
 	return Value;
 }
 
@@ -22,6 +21,7 @@ template<typename T>
 std::string ToString(const T& InValue)
 {
 	static std::unique_ptr<FProperty> TypeProperty(CreateProperty<T>("", 0));
+
 	return TypeProperty->ExportText(&InValue);
 }
 
@@ -41,23 +41,21 @@ public:
 
 		std::vector<std::string> ArgTexts = SplitArgs(InArgs, sizeof...(ArgTypes));
 
-		size_t Index = 0;
-		std::tuple<ArgTypes...> CallArgs{ FromString<ArgTypes>(ArgTexts[Index++])... };
+		return Invoke(Object, ArgTexts, std::index_sequence_for<ArgTypes...>());
+	}
 
-		auto CallMember = [this, Object](ArgTypes&... Args)
-		{
-			return (Object->*FunctionPointer)(Args...);
-		};
-
+	template<size_t... Indices>
+	std::string Invoke(ClassType* InObject, const std::vector<std::string>& InArgTexts, std::index_sequence<Indices...>) const
+	{
 		if constexpr (std::is_same_v<ReturnType, void>)
 		{
-			std::apply(CallMember, CallArgs);
+			(InObject->*FunctionPointer)(FromString<ArgTypes>(InArgTexts[Indices])...);
 
 			return "";
 		}
 		else
 		{
-			ReturnType ReturnValue = std::apply(CallMember, CallArgs);
+			ReturnType ReturnValue = (InObject->*FunctionPointer)(FromString<ArgTypes>(InArgTexts[Indices])...);
 
 			return ToString(ReturnValue);
 		}
